@@ -1,20 +1,4 @@
-#!/usr/bin/env python3
-"""
-Batch evaluation helper.
-Runs `main_eval_acc.py` over multiple prediction directories (e.g. A/B/C folds or runs),
-parses the reported average metrics tuple, then computes the overall mean across runs.
 
-Example:
-    python scripts/eval_multi.py \
-        --gt_path /root/autodl-tmp/Data/GT_Meshes/FAUST \
-        --pred_paths results/FAUST_runA results/FAUST_runB results/FAUST_runC
-
-Prerequisites:
-    Each pred_path must contain .ply files whose basenames match those under gt_path.
-    `main_eval_acc.py` expects arguments: --gt_path, --pred_path, [--sample_num].
-Output:
-    Per-run metrics and global mean printed to stdout. Optionally writes a CSV if --csv_out is given.
-"""
 import argparse
 import subprocess
 import re
