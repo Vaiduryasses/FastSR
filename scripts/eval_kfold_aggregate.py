@@ -1,20 +1,4 @@
-#!/usr/bin/env python3
-"""
-Aggregate evaluation across all folds by running main_eval_acc.py per-fold and averaging metrics.
 
-Assumptions:
-- Each fold's predictions are stored under results/<dataset>/<fold_tag>/
-- Ground-truth meshes are under Data/GT_Meshes/<dataset>/
-- main_eval_acc.py prints metrics to stdout; we will parse the printed lines from MeshEvaluator.
-
-Usage:
-  python scripts/eval_kfold_aggregate.py --dataset FAUST \
-      --gt_root /root/autodl-tmp/Data/GT_Meshes \
-      --results_root results/FAUST \
-      --sample_num 100000
-
-It will print per-fold metrics and a final mean/std summary. It also writes a CSV.
-"""
 from __future__ import annotations
 import argparse
 import json
