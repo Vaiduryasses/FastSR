@@ -456,6 +456,12 @@ def build_model(args: argparse.Namespace, device: torch.device, project_root: Pa
         param.requires_grad_(False)
 
     model = LoonUNet(encoder, bottleneck, triangle).to(device)
+    # Default behavior: use the lower-resolution pyramid level (P2) in unsupervised sampling.
+    # No CLI flag is required; callers can override by setting model.no_pyramid = False.
+    try:
+        setattr(model, "no_pyramid", True)
+    except Exception:
+        pass
     return model, load_report
 
 
@@ -945,7 +951,7 @@ def main() -> None:
                         "use_point_transformer": bool(getattr(args, 'use_point_transformer', False)),
                         "use_gat": bool(getattr(args, 'use_gat', False)),
                         "gat_heads": int(getattr(args, 'gat_heads', 4)),
-                        "no_pyramid": bool(args.no_pyramid),
+                        "no_pyramid": bool(getattr(model, "no_pyramid", True)),
                         "Lembed": int(args.Lembed),
                         "use_q_as_feat": not bool(getattr(args, 'disable_q_as_feat', False)),
                         "use_q_for_modulation": not bool(getattr(args, 'disable_q_modulation', False)),
@@ -978,7 +984,7 @@ def main() -> None:
                     "use_point_transformer": bool(getattr(args, 'use_point_transformer', False)),
                     "use_gat": bool(getattr(args, 'use_gat', False)),
                     "gat_heads": int(getattr(args, 'gat_heads', 4)),
-                    "no_pyramid": bool(args.no_pyramid),
+                    "no_pyramid": bool(getattr(model, "no_pyramid", True)),
                     "Lembed": int(args.Lembed),
                     "use_q_as_feat": not bool(getattr(args, 'disable_q_as_feat', False)),
                     "use_q_for_modulation": not bool(getattr(args, 'disable_q_modulation', False)),
@@ -1017,7 +1023,7 @@ def main() -> None:
                 "use_point_transformer": bool(getattr(args, 'use_point_transformer', False)),
                 "use_gat": bool(getattr(args, 'use_gat', False)),
                 "gat_heads": int(getattr(args, 'gat_heads', 4)),
-                "no_pyramid": bool(args.no_pyramid),
+                "no_pyramid": bool(getattr(model, "no_pyramid", True)),
                 "Lembed": int(args.Lembed),
                 "use_q_as_feat": not bool(getattr(args, 'disable_q_as_feat', False)),
                 "use_q_for_modulation": not bool(getattr(args, 'disable_q_modulation', False)),
