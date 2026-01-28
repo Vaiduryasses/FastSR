@@ -177,14 +177,14 @@ trained_models/
 └── model_knn50.pth              # Pre-trained model with KNN=50
 ```
 
-If using your own trained TCN model, S2 will automatically look for `S1_training/model_k{knn}/best_model`:
+If using your own trained TCN model, S2 will automatically look for `S1_training/model_k{knn}/best_model`. We also provide pretrained OON models onthe  ABC dataset in `runs/S2_train/model_best.pth`
 
 ---
 
 ## 🔍 Reconstruction & Evaluation
 
 ### Reconstruction 
-For shape-level datasets, you need to reconstruct the surface with the commands below, for scene-level datasets, `\kfold_runer.py`can reconstruct surface automatically:
+For shape-level datasets, you need to reconstruct the surface with the commands below; for scene-level datasets, `\kfold_runer.py`can reconstruct the surface automatically:
 ```bash
 #ABC
 python S2_reconstruct.py --use_loon_unet --loon_unet_ckpt runs/S2_train/<TIME>/model_best.pth   --dataset ABC_test  --gpu <GPU>
