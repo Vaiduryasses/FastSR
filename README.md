@@ -1,6 +1,6 @@
 # FastSESR: Fast Scene-level Explicit Surface Reconstruction
 
-<img src="./framework.png" alt="主要示意图" width="1000"/>
+<img src="./framework.png" alt="picture" width="1000"/>
 
 FastSESR is a point cloud surface reconstruction framework that employs a two-stage  training strategy to efficiently reconstruct meshes from point clouds. The project supports multiple datasets and provides complete training, evaluation, and reconstruction pipelines.
 
