@@ -542,61 +542,37 @@ def run_step(
                         if enc is None:
                             raise RuntimeError("can't find encoder!")
 
-                        (P0_enc, F0), (P1, F1, idx1), (P2, F2, idx2), (P3, F3, idx3) = enc(P0_b3n)
+                        enc_out = enc(P0_b3n)
+                        if not isinstance(enc_out, (list, tuple)) or len(enc_out) != 3:
+                            raise RuntimeError(f"encoder output must be 3-level tuple/list, got: {type(enc_out)} len={len(enc_out) if isinstance(enc_out, (list, tuple)) else 'n/a'}")
 
-                        if use_p2:
-                            P_target_bn3 = P2.permute(0, 2, 1).contiguous()  # [B,N2,3]
-                            _, N_target, _ = P_target_bn3.shape
-                            
-                            if N_target == 0:
-                                raise RuntimeError("encoder output P2 is empty")
-                            
-                            if N_target > max_points:
-                                if _p3d_sample_farthest_points is not None:
-                                    pts_1 = P_target_bn3[:1]  # [1,N2,3]
-                                    _, fps_idx = _p3d_sample_farthest_points(pts_1, K=max_points)
-                                    idx_p_target = fps_idx[0]
-                                else:
-                                    idx_p_target = torch.randperm(N_target, device=P_target_bn3.device)[:max_points]
+                        (P0_enc, F0), (P1, F1, idx1), (P2, F2, idx2) = enc_out
+
+                        # FastSESR uses 3-level pyramid; sample only from P2.
+                        P_target_bn3 = P2.permute(0, 2, 1).contiguous()  # [B,N2,3]
+                        _, N_target, _ = P_target_bn3.shape
+
+                        if N_target == 0:
+                            raise RuntimeError("encoder output P2 is empty")
+
+                        if N_target > max_points:
+                            if _p3d_sample_farthest_points is not None:
+                                pts_1 = P_target_bn3[:1]  # [1,N2,3]
+                                _, fps_idx = _p3d_sample_farthest_points(pts_1, K=max_points)
+                                idx_p_target = fps_idx[0]
                             else:
-                                idx_p_target = torch.arange(N_target, device=P_target_bn3.device)
-                            
-                            idx1_b = idx1[0]        # [N1]
-                            idx2_b = idx2[0]        # [N2]
-                            
-                            map1 = idx1_b                               # P1 -> P0
-                            map2 = map1[idx2_b]                          # P2 -> P0
-                            
-                            sel0 = map2[idx_p_target]                   
-                            sel = sel0.sort().values                     # [S]
+                                idx_p_target = torch.randperm(N_target, device=P_target_bn3.device)[:max_points]
                         else:
-                            P_target_bn3 = P3.permute(0, 2, 1).contiguous()  # [B,N3,3]
-                            _, N_target, _ = P_target_bn3.shape
-                            
-                            if N_target == 0:
-                                raise RuntimeError("encoder output P3 is empty!")
-                            
-                            if N_target > max_points:
-                                if _p3d_sample_farthest_points is not None:
-                                    pts_1 = P_target_bn3[:1]  # [1,N3,3]
-                                    _, fps_idx = _p3d_sample_farthest_points(pts_1, K=max_points)
-                                    idx_p_target = fps_idx[0]
-                                else:
-                                    idx_p_target = torch.randperm(N_target, device=P_target_bn3.device)[:max_points]
-                            else:
-                                idx_p_target = torch.arange(N_target, device=P_target_bn3.device)
-                            
-                            # P3 -> P0:P1 = P0[idx1]，P2 = P1[idx2]，P3 = P2[idx3]
-                            idx1_b = idx1[0]        # [N1]
-                            idx2_b = idx2[0]        # [N2]
-                            idx3_b = idx3[0]        # [N3]
-                            
-                            map1 = idx1_b                               # P1 -> P0
-                            map2 = map1[idx2_b]                          # P2 -> P0
-                            map3 = map2[idx3_b]                          # P3 -> P0
-                            
-                            sel0 = map3[idx_p_target]                    
-                            sel = sel0.sort().values                     # [S]
+                            idx_p_target = torch.arange(N_target, device=P_target_bn3.device)
+
+                        idx1_b = idx1[0]        # [N1]
+                        idx2_b = idx2[0]        # [N2]
+
+                        map1 = idx1_b                               # P1 -> P0
+                        map2 = map1[idx2_b]                          # P2 -> P0
+
+                        sel0 = map2[idx_p_target]
+                        sel = sel0.sort().values                     # [S]
 
                 P0_sub_bn3 = P0_bn3[:, sel]                           # [B,S,3]
                 P0_sub_b3s = P0_sub_bn3.permute(0, 2, 1).contiguous() # [B,3,S]
@@ -948,16 +924,9 @@ def main() -> None:
                         "unet_hidden": int(args.unet_hidden),
                         "unet_T": int(args.unet_T),
                         "unet_K": int(args.unet_K),
-                        "use_point_transformer": bool(getattr(args, 'use_point_transformer', False)),
-                        "use_gat": bool(getattr(args, 'use_gat', False)),
-                        "gat_heads": int(getattr(args, 'gat_heads', 4)),
                         "no_pyramid": bool(getattr(model, "no_pyramid", True)),
                         "Lembed": int(args.Lembed),
                         "use_q_as_feat": not bool(getattr(args, 'disable_q_as_feat', False)),
-                        "use_q_for_modulation": not bool(getattr(args, 'disable_q_modulation', False)),
-                        # backward compatibility keys
-                        "enable_quality_modulator": not bool(getattr(args, 'disable_q_modulation', False)),
-                        "enable_q_feat": not bool(getattr(args, 'disable_q_as_feat', False)),
                         "share_offset_former": not bool(getattr(args, 'no_share_offset_former', False)),
                     },
                 }
@@ -981,15 +950,9 @@ def main() -> None:
                     "unet_hidden": int(args.unet_hidden),
                     "unet_T": int(args.unet_T),
                     "unet_K": int(args.unet_K),
-                    "use_point_transformer": bool(getattr(args, 'use_point_transformer', False)),
-                    "use_gat": bool(getattr(args, 'use_gat', False)),
-                    "gat_heads": int(getattr(args, 'gat_heads', 4)),
                     "no_pyramid": bool(getattr(model, "no_pyramid", True)),
                     "Lembed": int(args.Lembed),
                     "use_q_as_feat": not bool(getattr(args, 'disable_q_as_feat', False)),
-                    "use_q_for_modulation": not bool(getattr(args, 'disable_q_modulation', False)),
-                    "enable_quality_modulator": not bool(getattr(args, 'disable_q_modulation', False)),
-                    "enable_q_feat": not bool(getattr(args, 'disable_q_as_feat', False)),
                     "share_offset_former": not bool(getattr(args, 'no_share_offset_former', False)),
                 },
             }
@@ -1020,15 +983,9 @@ def main() -> None:
                 "unet_hidden": int(args.unet_hidden),
                 "unet_T": int(args.unet_T),
                 "unet_K": int(args.unet_K),
-                "use_point_transformer": bool(getattr(args, 'use_point_transformer', False)),
-                "use_gat": bool(getattr(args, 'use_gat', False)),
-                "gat_heads": int(getattr(args, 'gat_heads', 4)),
                 "no_pyramid": bool(getattr(model, "no_pyramid", True)),
                 "Lembed": int(args.Lembed),
                 "use_q_as_feat": not bool(getattr(args, 'disable_q_as_feat', False)),
-                "use_q_for_modulation": not bool(getattr(args, 'disable_q_modulation', False)),
-                "enable_quality_modulator": not bool(getattr(args, 'disable_q_modulation', False)),
-                "enable_q_feat": not bool(getattr(args, 'disable_q_as_feat', False)),
                 "share_offset_former": not bool(getattr(args, 'no_share_offset_former', False)),
             },
         }, final_path)
