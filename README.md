@@ -149,7 +149,7 @@ splits/
 
 ```bash
 #ABC
-python S2/S2_train_loon_unet.py --delta 0.0 --dataset ABC_train --data_root ./Data --gpu <GPU> --epochs 1 --lr 1e-3 --unet_T 2 --unsup 
+python S2/S2_train_loon_unet.py --delta 0.0 --dataset ABC_train --data_root ./Data --gpu <GPU> --epochs 1 --lr 1e-3 --unet_T 2 --unsup --unsup_max_points 20000 --chunk_size 2000
 #CARLA
 python scripts/kfold_runner.py   --dataset CARLA_1M   --data_root ./Data   --epochs 30   --gpu <GPU>   --use_loon_unet   --extra_train_args " --unet_k 16 --unsup --unsup_max_points 20000 --chunk_size 3000 --unet_T 2 --delta 0.1"
 #Matterport3D
