@@ -8,4 +8,3 @@ trimesh
 pykdtree
 wandb
 gdown
-pytorch3d
