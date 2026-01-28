@@ -10,13 +10,10 @@ FastSESR is a deep learning-based point cloud surface reconstruction framework t
 ## 📋 Table of Contents
 
 - [Environment Setup](#-environment-setup)
-- [Dependencies](#-dependencies)
 - [Dataset Preparation](#-dataset-preparation)
-- [Stage 1 Training](#-stage-1-training)
-- [Stage 2 Training](#-stage-2-training)
+- [Training]()
 - [Pre-trained Models](#-pre-trained-models)
 - [Reconstruction & Evaluation](#-reconstruction--evaluation)
-- [Project Structure](#-project-structure)
 
 ---
 
@@ -30,7 +27,7 @@ conda activate fastsesr
 
 ### 2. Install PyTorch
 
-Install PyTorch according to your CUDA version (PyTorch 2.6.0+ recommended). We use cuda 11.8 with Pytorch 2.6.0:
+Install PyTorch for your CUDA version (PyTorch 2.6.0+ is recommended). We use cuda 11.8 with Pytorch 2.6.0:
 
 ```bash
 # CUDA 11.8
@@ -39,7 +36,7 @@ pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https
 
 ### 3. Install PyTorch3D
 
-PyTorch3D is required for LOON-UNet's kNN operations and Chamfer distance computation:
+PyTorch3D is required for kNN operations and Chamfer distance computation:
 
 ```bash
 # Using conda (recommended)
