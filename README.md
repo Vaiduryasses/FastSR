@@ -126,7 +126,7 @@ S1_training/
 Use `generate_fixed_splits.py` to generate reproducible K-fold splits:
 
 ```bash
-python scripts/generate_fixed_splits.py  --data_root ./Data --datasets DATASET
+python scripts/generate_fixed_splits.py  --data_root ./Data --datasets <DATASET>
 ```
 
 This will generate split configuration files under the `splits/<dataset>/` directory.
@@ -134,7 +134,7 @@ This will generate split configuration files under the `splits/<dataset>/` direc
 ##### Step 2: Convert JSON Splits to File Lists
 
 ```bash
-python scripts/convert_json_splits_to_kfold_lists.py --dataset DATASET
+python scripts/convert_json_splits_to_kfold_lists.py --dataset <DATASET>
 ```
 
 Generated directory structure:
@@ -157,13 +157,13 @@ splits/
 
 ```bash
 #ABC
-python S2/S2_train_loon_unet.py --delta 0.0 --dataset ABC_train --data_root ./Data --gpu GPU --epochs 1 --lr 1e-3 --unet_T 2 --unsup 
+python S2/S2_train_loon_unet.py --delta 0.0 --dataset ABC_train --data_root ./Data --gpu <GPU> --epochs 1 --lr 1e-3 --unet_T 2 --unsup 
 #CARLA
-python scripts/kfold_runner.py   --dataset CARLA_1M   --data_root ./Data   --epochs 30   --gpu GPU   --use_loon_unet   --extra_train_args " --unet_k 16 --unsup --unsup_max_points 20000 --chunk_size 3000 --unet_T 2 --delta 0.1"
+python scripts/kfold_runner.py   --dataset CARLA_1M   --data_root ./Data   --epochs 30   --gpu <GPU>   --use_loon_unet   --extra_train_args " --unet_k 16 --unsup --unsup_max_points 20000 --chunk_size 3000 --unet_T 2 --delta 0.1"
 #Matterport3D
-python scripts/kfold_runner.py   --dataset Matterport3D   --data_root ./Data   --epochs 30   --gpu GPU   --use_loon_unet   --extra_train_args " --unet_k 16 --unsup --unsup_max_points 20000 --chunk_size 3000 --unet_T 2 --delta 0.1"
+python scripts/kfold_runner.py   --dataset Matterport3D   --data_root ./Data   --epochs 30   --gpu <GPU>   --use_loon_unet   --extra_train_args " --unet_k 16 --unsup --unsup_max_points 20000 --chunk_size 3000 --unet_T 2 --delta 0.1"
 #ScanNet
-python3 scripts/kfold_runner.py   --dataset ScanNet   --data_root ./Data   --epochs 30   --gpu GPU   --use_loon_unet   --extra_train_args " --unet_k 16 --unsup --unsup_max_points 20000 --chunk_size 3000 --unet_T 2 --delta 0.02”
+python3 scripts/kfold_runner.py   --dataset ScanNet   --data_root ./Data   --epochs 30   --gpu <GPU>   --use_loon_unet   --extra_train_args " --unet_k 16 --unsup --unsup_max_points 20000 --chunk_size 3000 --unet_T 2 --delta 0.02”
 ```
 
 ---
