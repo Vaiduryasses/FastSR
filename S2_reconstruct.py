@@ -18,7 +18,6 @@ except Exception:
 from dataset.pc_recon import PCReconSet
 from S2.loss_unsupervised import ReconLoss
 from S2.ReconNet import S2ReconNet
-from S2.offset_opt import OffsetOPT
 from S2.ExtractFace import SurfExtract
 
 
