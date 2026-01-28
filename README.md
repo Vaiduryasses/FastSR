@@ -7,7 +7,7 @@ FastSESR is a deep learning-based point cloud surface reconstruction framework t
 
 - [Environment Setup](#-environment-setup)
 - [Dataset Preparation](#-dataset-preparation)
-- [Training](#-Training)
+- [Training](#-training)
 - [Pre-trained Models](#-pre-trained-models)
 - [Reconstruction & Evaluation](#-reconstruction--evaluation)
 
@@ -116,7 +116,7 @@ S1_training/
 ```
 ---
 
-### 🚀 Offset Optimization Network (OON)
+### Offset Optimization Network (OON)
 
 
 ### Dataset Splitting
